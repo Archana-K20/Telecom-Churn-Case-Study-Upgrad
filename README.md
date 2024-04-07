@@ -13,74 +13,66 @@ In this project, we will analyse customer-level data of a leading telecom firm, 
 
 ## Understanding and Defining Churn
 
-There are two main models of payment in the telecom industry - postpaid (customers pay a monthly/annual bill after using the services) and prepaid (customers pay/recharge with a certain amount in advance and then use the services).
+In the telecom sector, there are two primary payment models: prepaid (where users pay a set amount in advance and then use the services) and postpaid (where users pay a monthly or annual cost after using the services).
 
-In the postpaid model, when customers want to switch to another operator, they usually inform the existing operator to terminate the services, and we directly know that this is an instance of churn.
+In the postpaid model, users typically notify the current operator to stop services when they wish to switch to a different provider, and we can immediately identify this as a case of churn.
 
-However, in the prepaid model, customers who want to switch to another network can simply stop using the services without any notice, and it is hard to know whether someone has actually churned or is simply not using the services temporarily (e.g. someone may be on a trip abroad for a month or two and then intend to resume using the services again).
+It is difficult to determine whether a customer has churned or is just not using the services temporarily (for example, they may be traveling overseas for a month or two and then plan to resume using the services again). Additionally, under the prepaid model, customers who wish to switch to another network can simply stop using the services without any notice.
 
-Thus, churn prediction is usually more critical (and non-trivial) for prepaid customers, and the term ‘churn’ should be defined carefully.  Also, prepaid is the most common model in India and southeast Asia, while postpaid is more common in Europe in North America.
+Because of this, predicting churn is typically more important (and difficult) for prepaid consumers, therefore the word "churn" needs to be used carefully.  Additionally, postpaid plans are more prevalent in Europe and North America, but prepaid plans are more frequent in India and Southeast Asia.
 
-This project is based on the Indian and Southeast Asian market.
+The Indian and Southeast Asian markets are the foundation of this endeavor.
+
 
 ## Definitions of Churn 
 
-There are various ways to define churn, such as:
+Churn can be defined in a number of ways, including:
 
-**Revenue-based churn:** Customers who have not utilised any revenue-generating facilities such as mobile internet, outgoing calls, SMS etc. over a given period of time. One could also use aggregate metrics such as ‘customers who have generated less than INR 4 per month in total/average/median revenue’.
+**Revenue-based Churn:** Clients who, for a specified amount of time, have not used any revenue-generating services, like SMS, outbound calls, or mobile internet. Aggregate metrics like "customers who have generated less than INR 4 per month in total/average/median revenue" are another option.
 
-The main shortcoming of this definition is that there are customers who only receive calls/SMSes from their wage-earning counterparts, i.e. they don’t generate revenue but use the services. For example, many users in rural areas only receive calls from their wage-earning siblings in urban areas.
+The primary flaw in this definition is that some clients utilize the services but don't produce any income; they are merely recipients of calls or SMSs from their wage-earning colleagues. For instance, a lot of users in rural areas only get calls from their metropolitan siblings who earn a living.
 
-**Usage-based churn:** Customers who have not done any usage, either incoming or outgoing - in terms of calls, internet etc. over a period of time.
+**Usage-based churn:** Clients who have not used any services over a given period of time, including calls, internet, or other outbound communications.
 
-A potential shortcoming of this definition is that when the customer has stopped using the services for a while, it may be too late to take any corrective actions to retain them. For e.g., if we define churn based on a ‘two-months zero usage’ period, predicting churn could be useless since by that time the customer would have already switched to another operator.
+This definition may have a drawback in that it might be too late to take corrective measures to keep the client after they have ceased utilizing the services for some time. For example, if we define churn as a "two-month zero usage" period, then it may be impossible to estimate turnover because the customer would have already moved to a different provider by then.
 
-In this project, we will use the **usage-based** definition to define churn.
+In this project, churn will be defined using the **usage-based** concept.
 
 ## High-value Churn
 
-In the Indian and the southeast Asian market, approximately 80% of revenue comes from the top 20% customers (called high-value customers). Thus, if we can reduce churn of the high-value customers, we will be able to reduce significant revenue leakage.
+About 80% of revenue in the Indian and Southeast Asian markets originates from the top 20% of consumers, or so-called high-value clients. Therefore, we will be able to reduce large income leakage if we can lower the churn rate of high-value consumers.
 
-In this project, we will define high-value customers based on a certain metric (mentioned later below) and predict churn only on high-value customers.
+In this project, we will identify high-value clients using a particular metric (explained below) and we will exclusively forecast churn for high-value clients.
 
 ## Understanding the Business Objective and the Data
 
-The dataset contains customer-level information for a span of four consecutive months - June, July, August and September. The months are encoded as 6, 7, 8 and 9, respectively. 
+Customer-level data for the months of June, July, August, and September is included in the dataset. The corresponding months' codes are 6, 7, 8, and 9. 
 
-The business objective is to predict the churn in the last (i.e. the ninth) month using the data (features) from the first three months. To do this task well, understanding the typical customer behaviour during churn will be helpful.
+Using the data (features) from the first three months, the business goal is to forecast the churn in the last (i.e., ninth) month. It will be useful to comprehend the normal consumer behavior during churn in order to perform this activity effectively.
 
 ## Understanding Customer Behaviour During Churn
 
-Customers usually do not decide to switch to another competitor instantly, but rather over a period of time (this is especially applicable to high-value customers). In churn prediction, we assume that there are three phases of customer lifecycle :
+Consumers typically decide to move to a rival over time rather than all at once (this is especially true for high-value clients). We make the following assumptions about the customer lifecycle phases when predicting churn:
+1. **The positive phase": During this stage, the client is satisfied with the service and acts normally.
 
-1. **The ‘good’ phase:** In this phase, the customer is happy with the service and behaves as usual.
+2. **The stage of "action":** During this phase, the customer experience begins to suffer; for example, he or she receives an alluring offer from a rival, is subjected to unfair charges, is dissatisfied with the quality of the service, etc. The client typically behaves differently during this time than during the "good" months. Additionally, since remedial measures (such matching the competitor's price or enhancing the quality of the service, among other things) can be implemented at this time, it is critical to identify high-churn-risk clients during this period.
+   
+3. **The period of "churn":** The consumer is considered to have churned at this time. On the basis of this stage, we define churn. It's also crucial to remember that we were unable to forecast this data at the time of the prediction (i.e., the action months). We therefore discard all of the data associated with this phase after classifying churn as 1/0 based on this phase.
 
-2. **The ‘action’ phase:** The customer experience starts to sore in this phase, for e.g. he/she gets a compelling offer from a  competitor, faces unjust charges, becomes unhappy with service quality etc. In this phase, the customer usually shows different behaviour than the ‘good’ months. Also, it is crucial to identify high-churn-risk customers in this phase, since some corrective actions can be taken at this point (such as matching the competitor’s offer/improving the service quality etc.)
-
-3. **The ‘churn’ phase:** In this phase, the customer is said to have churned. We define churn based on this phase. Also, it is important to note that at the time of prediction (i.e. the action months), this data is not available to us for prediction. Thus, after tagging churn as 1/0 based on this phase, we discard all data corresponding to this phase.
-
-In this case, since we are working over a four-month window, the first two months are the ‘good’ phase, the third month is the ‘action’ phase, while the fourth month is the ‘churn’ phase.
-
-## Dataset and Data Dictionary
-
-The dataset can be downloaded from [here](https://drive.google.com/file/d/1SWnADIda31mVFevFcfkGtcgBHTKKI94J/view).
-
-Data dictionary is uploaded. The data dictionary contains meanings of abbreviations. Some frequent ones are loc (local), IC (incoming), OG (outgoing), T2T (telecom operator to telecom operator), T2O (telecom operator to another operator), RECH (recharge) etc.
-
-The attributes containing 6, 7, 8, 9 as suffixes imply that those correspond to the months 6, 7, 8, 9 respectively.
+Since we are working over a four-month period in this instance, the first two months are considered the "good" phase, the third month is considered the "action" phase, and the fourth month is considered the "churn" phase.
 
 ## Data Preparation
 
 The following data preparation steps are crucial for this problem:
 
 1. **Derive new features**
-This is one of the most important parts of data preparation since good features are often the differentiators between good and bad models. We will use our business understanding to derive features that we think could be important indicators of churn.
+This is among the most crucial aspects of data preparation since high-quality features frequently set good models apart from subpar ones. Using our knowledge of business, we will identify characteristics that we believe may be significant churn indicators.
 
 2. **Filter high-value customers**
-As mentioned above, we need to predict churn only for the high-value customers. Define high-value customers as follows: Those who have recharged with an amount more than or equal to X, where X is the 70th percentile of the average recharge amount in the first two months (the good phase).
+As previously said, we only need to forecast attrition for high-value clients. High-value clients should be defined as follows: Individuals who have refilled with a quantity greater than or equal to X, where X represents the 70th percentile of the mean amount refilled over the first two months (the favorable phase).
 
 3. **Tag churners and remove attributes of the churn phase**
-Now tag the churned customers (churn=1, else 0) based on the fourth month as follows: Those who have not made any calls (either incoming or outgoing) AND have not used mobile internet even once in the churn phase. The attributes we need to use to tag churners are:
+Next, categorize the customers who have churned (if churn=1, otherwise 0) according to the fourth month. Individuals who have not placed or received any calls during the churn phase, as well as those who have never used mobile internet. To identify churners, we must use the following attributes:
 
 - total_ic_mou_9
 - total_og_mou_9
@@ -91,30 +83,29 @@ After tagging churners, we need to remove all the attributes corresponding to th
 
 ## Modelling
 
-Build models to predict churn. The predictive model that we are going to build will serve two purposes:
+Create models to forecast attrition. There will be two uses for the prediction model we develop:
 
-1. It will be used to predict whether a high-value customer will churn or not, in near future (i.e. churn phase). By knowing this, the company can take action steps such as providing special plans, discounts on recharge etc.
+1. It will be utilized to forecast the likelihood of a high-value customer leaving in the near future (i.e., the churn phase). Knowing this allows the business to take appropriate action, like offering exclusive programs or low-cost recharges.
 
-2. It will be used to identify important variables that are strong predictors of churn. These variables may also indicate why customers choose to switch to other networks.
+2. It will be applied to determine significant variables that have high churn prediction power. These factors might also reveal the reasons behind users' decisions to move to different networks.
 
-In some cases, both of the above-stated goals can be achieved by a single machine learning model. But here, we have a large number of attributes, and thus we should try using a dimensionality reduction technique such as PCA and then build a predictive model. After PCA, we can use any classification model.
+In certain instances, a single machine learning model can accomplish both of the aforementioned objectives. However, because there are a lot of features in this case, we should consider dimensionality reduction techniques like PCA before developing a predictive model. We can apply any classification model after PCA.
 
-Also, since the rate of churn is typically low (about 5-10%, this is called class-imbalance) - we will try using techniques to handle class imbalance. 
+Additionally, we will attempt utilizing strategies to address class imbalance because the rate of churn is normally low (around 5–10%; this is known as class-imbalance). 
 
-We can take the following suggestive steps to build the model:
+To construct the model, we might consider the following suggested actions:
+1. Preprocess the data (manage missing values, format columns appropriately, etc.).
+2. Use relevant exploratory analysis to glean insights that can be applied to future modeling or feature engineering projects, or directly to business needs.
+3. Create fresh characteristics.
+4. Use PCA to lower the number of variables.
+5. Utilizing appropriate methodologies, train a range of models and adjust model hyperparameters (manage class imbalance).
+6. Apply the proper evaluation metrics to the models' assessment. Keep in mind that accurately identifying churners is more crucial than precisely identifying non-churners; use an evaluation tool that aligns with this business objective.
+7. Lastly, select a model using a metric for evaluation.
 
-1. Preprocess data (convert columns to appropriate formats, handle missing values, etc.)
-2. Conduct appropriate exploratory analysis to extract useful insights (whether directly useful for business or for eventual modelling/feature engineering).
-3. Derive new features.
-4. Reduce the number of variables using PCA.
-5. Train a variety of models, tune model hyperparameters, etc. (handle class imbalance using appropriate techniques).
-6. Evaluate the models using appropriate evaluation metrics. Note that it is more important to identify churners than the non-churners accurately - choose an appropriate evaluation metric which reflects this business goal.
-7. Finally, choose a model based on some evaluation metric.
+Only one of the two objectives can be met by the aforementioned model: it can only identify which consumers are likely to leave. The aforementioned approach is insufficient for identifying the critical churn traits. This is because PCA typically yields components that are difficult to understand.
 
-The above model will only be able to achieve one of the two goals - to predict customers who will churn. We can’t use the above model to identify the important features for churn. That’s because PCA usually creates components which are not easy to interpret.
+As a result, the primary goal of the second model we develop will be to pinpoint significant predictor features that aid in the understanding of churn indicators by the company. A tree family model or a logistic regression model are acceptable options for determining significant variables. We shall take steps to address multi-collinearity in the event of logistic regression.
 
-Therefore, we will build another model with the main objective of identifying important predictor attributes which help the business understand indicators of churn. A good choice to identify important variables is a logistic regression model or a model from the tree family. In case of logistic regression, we will make sure to handle multi-collinearity.
+Once significant predictors have been identified, visually represent them using plots, summary tables, or other techniques that best illustrate the significance of the features, in our opinion.
 
-After identifying important predictors, display them visually - we can use plots, summary tables etc. - whatever we think best conveys the importance of features.
-
-Finally, recommend strategies to manage customer churn based on our observations.
+Lastly, based on our observations, suggest customer churn management tactics.
